@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SMS Length Counter</title>
+
+    <link rel="stylesheet" href="Internstyle.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>SMS Length Counter</h1>
+
+        <p class="subtitle">
+            How many texts will this cost?
+        </p>
+
+        <div class="counter-card">
+
+            <label for="message">Your message</label>
+
+            <textarea
+                id="message"
+                placeholder="Type your SMS here..."
+                rows="8"
+            ></textarea>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <span class="label">Characters</span>
+                    <span id="characterCount">0</span>
+                </div>
+
+                <div class="stat">
+                    <span class="label">SMS Parts</span>
+                    <span id="smsParts">0</span>
+                </div>
+
+                <div class="stat">
+                    <span class="label">Encoding</span>
+                    <span id="encoding">Plain text</span>
+                </div>
+
+            </div>
+
+            <div id="limitInfo" class="info">
+                You can type up to 160 characters in one SMS.
+            </div>
+
+            <div id="unicodeWarning" class="warning hidden">
+                <strong>Unicode detected</strong>
+                <p id="unicodeReason"></p>
+            </div>
+
+        </div>
+
+
+        <section class="rules">
+
+            <h2>Ground rules</h2>
+
+            <ul>
+                <li>Plain text: 160 characters per SMS.</li>
+                <li>When split: 153 characters per SMS part.</li>
+                <li>One emoji or special Unicode character switches to Unicode.</li>
+                <li>Unicode: 70 characters per SMS.</li>
+                <li>When split: 67 characters per SMS part.</li>
+            </ul>
+
+        </section>
+
+
+        <section class="stretch">
+
+            <h2>Stretch: GSM characters that count double</h2>
+
+            <p>
+                These characters use two GSM characters instead of one:
+            </p>
+
+            <div class="double-characters">
+                <span>€</span>
+                <span>^</span>
+                <span>{</span>
+                <span>}</span>
+                <span>[</span>
+                <span>]</span>
+                <span>~</span>
+                <span>\</span>
+                <span>|</span>
+				<span>/</span>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+		const messageInput = document.getElementById("message");
+
+const characterCount = document.getElementById("characterCount");
+const smsParts = document.getElementById("smsParts");
+const encoding = document.getElementById("encoding");
+
+const limitInfo = document.getElementById("limitInfo");
+
+const unicodeWarning = document.getElementById("unicodeWarning");
+const unicodeReason = document.getElementById("unicodeReason");
+
+
+// GSM-7 basic characters
+const gsmBasic =
+    "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞ" +
+    "ÆæßÉ !\"#¤%&'()*+,-./" +
+    "0123456789:;<=>?¡" +
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿" +
+    "abcdefghijklmnopqrstuvwxyzäöñüà";
+
+
+// GSM-7 extension characters
+const gsmExtended = "^{}\\[~]|€";
+
+
+function isGsmCharacter(character) {
+
+    return (
+        gsmBasic.includes(character) ||
+        gsmExtended.includes(character)
+    );
+
+}
+
+
+function isGsmExtendedCharacter(character) {
+
+    return gsmExtended.includes(character);
+
+}
+
+
+function findUnicodeCharacter(message) {
+
+    for (const character of message) {
+
+        if (!isGsmCharacter(character)) {
+            return character;
+        }
+
+    }
+
+    return null;
+}
+
+
+function calculateGsmLength(message) {
+
+    let length = 0;
+
+    for (const character of message) {
+
+        if (isGsmExtendedCharacter(character)) {
+            length += 2;
+        } else {
+            length += 1;
+        }
+
+    }
+
+    return length;
+}
+
+
+function calculateSmsParts(length, singleLimit, multipartLimit) {
+
+    if (length === 0) {
+        return 0;
+    }
+
+    if (length <= singleLimit) {
+        return 1;
+    }
+
+    return Math.ceil(length / multipartLimit);
+}
+
+
+function updateCounter() {
+
+    const message = messageInput.value;
+
+    const unicodeCharacter = findUnicodeCharacter(message);
+
+    let length;
+    let parts;
+
+    if (unicodeCharacter) {
+
+        // Unicode / UCS-2
+        length = [...message].length;
+
+        parts = calculateSmsParts(
+            length,
+            70,
+            67
+        );
+
+        characterCount.textContent = length;
+
+        smsParts.textContent = parts;
+
+        encoding.textContent = "Unicode";
+
+        limitInfo.textContent =
+            parts === 1
+                ? "You can type up to 70 characters in one Unicode SMS."
+                : "Unicode SMS parts contain up to 67 characters each.";
+
+        unicodeWarning.classList.remove("hidden");
+
+        unicodeReason.textContent =
+            `"${unicodeCharacter}" is not part of the standard GSM character set, so the message uses Unicode.`;
+
+    } else {
+
+        // GSM-7
+        length = calculateGsmLength(message);
+
+        parts = calculateSmsParts(
+            length,
+            160,
+            153
+        );
+
+        characterCount.textContent = length;
+
+        smsParts.textContent = parts;
+
+        encoding.textContent = "Plain text";
+
+        limitInfo.textContent =
+            parts === 1
+                ? "You can type up to 160 GSM characters in one SMS."
+                : "Split GSM SMS parts contain up to 153 characters each.";
+
+        unicodeWarning.classList.add("hidden");
+
+    }
+
+}
+
+
+messageInput.addEventListener("input", updateCounter);
+
+
+// Run once when page loads
+updateCounter();
+	</script>
+
+</body>
+</html>

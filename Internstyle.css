@@ -1,0 +1,159 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: 50px auto;
+}
+
+h1 {
+    margin-bottom: 5px;
+    font-size: 36px;
+}
+
+.subtitle {
+    color: #6b7280;
+    margin-bottom: 30px;
+}
+
+.counter-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+textarea {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    resize: vertical;
+    outline: none;
+    font-family: Arial, sans-serif;
+}
+
+textarea:focus {
+    border-color: #2563eb;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat {
+    background: #f3f4f6;
+    padding: 18px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat .label {
+    display: block;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.stat span:last-child {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #eff6ff;
+    border-radius: 8px;
+    color: #1d4ed8;
+}
+
+.warning {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    border-radius: 6px;
+}
+
+.warning p {
+    margin-bottom: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.rules,
+.stretch {
+    margin-top: 30px;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.rules h2,
+.stretch h2 {
+    margin-top: 0;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+.double-characters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.double-characters span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 40px;
+    height: 40px;
+
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .container {
+        width: 95%;
+        margin: 25px auto;
+    }
+}
